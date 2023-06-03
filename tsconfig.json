@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "module": "ES2020",
+      "noImplicitAny": false,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "moduleResolution": "nodenext",
+      "target": "ES2020"
+    },
+    "include": ["*.ts"],
+    "exclude": ["node_modules"],
+  }
