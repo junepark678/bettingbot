@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "main": "node index.js",
     "register": "node register.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build": "netlify-lambda build express"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "dotenv": "^16.1.3",
     "express": "^4.18.2",
     "mysql2": "^3.3.3",
+    "netlify-lambda": "^2.0.16",
     "node-fetch": "^3.3.1"
   },
   "devDependencies": {
