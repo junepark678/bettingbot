@@ -89,7 +89,7 @@ export const message_components: MessageComponentType[] = [
         let userlevel = Number.parseInt(user.level.toString());
         let price = Math.pow(10, userlevel) * userlevel
 
-        prisma.user.update({
+        await prisma.user.update({
             where: {
                 combid: combid
             },
