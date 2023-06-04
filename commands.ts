@@ -436,7 +436,7 @@ export const commands: CommandType[] = [
                 components: [
                   {
                     type: ComponentType.Button,
-                    custom_id: `store_levelup_${member.user.id}`,
+                    custom_id: `store_levelup_${member.user.id}_${id}`,
                     label: `레벨업! (${price}원)`,
                     style: 1,
                     disabled: price > user.balance
