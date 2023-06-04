@@ -109,7 +109,7 @@ export const commands = [
 
         let final = clamp(mult * plusminus, -1, 3);
 
-        let amountToSet = BigInt(amount.toString()) * BigInt(final);
+        let amountToSet = BigInt(Math.ceil(Number.parseInt(amount.toString()) * final));
 
         const newuser = await prisma.user.update({
           where: { combid: makeCombid(member.user.id, guild_id) },
