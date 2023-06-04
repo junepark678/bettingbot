@@ -1,11 +1,12 @@
 import "dotenv/config";
 import fetch from "node-fetch";
 import { verifyKey } from "discord-interactions";
-import { InteractionResponseType } from "discord-interactions";
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+import { Request, Response } from "express";
+import { APIApplicationCommandOptional } from "./types.js";
 
-export function VerifyDiscordRequest(clientKey) {
-  return function (req, res, buf, encoding) {
+export function VerifyDiscordRequest(clientKey: string) {
+  return function (req: Request, res: Response, buf: Buffer, encoding: any) {
     const signature = req.get("X-Signature-Ed25519");
     const timestamp = req.get("X-Signature-Timestamp");
 
@@ -17,7 +18,7 @@ export function VerifyDiscordRequest(clientKey) {
   };
 }
 
-export async function DiscordRequest(endpoint, options) {
+export async function DiscordRequest(endpoint: string, options: any) {
   // append endpoint to root API URL
   const url = "https://discord.com/api/v10/" + endpoint;
   // Stringify payloads
@@ -42,7 +43,7 @@ export async function DiscordRequest(endpoint, options) {
   return res;
 }
 
-export async function InstallGlobalCommands(appId, commands) {
+export async function InstallGlobalCommands(appId: number | string, commands: APIApplicationCommandOptional[]) {
   // API endpoint to overwrite global commands
   const endpoint = `applications/${appId}/commands`;
 
@@ -52,31 +53,6 @@ export async function InstallGlobalCommands(appId, commands) {
   } catch (err) {
     console.error(err);
   }
-}
-
-// Simple method that returns a random emoji from list
-export function getRandomEmoji() {
-  const emojiList = [
-    "😭",
-    "😄",
-    "😌",
-    "🤓",
-    "😎",
-    "😤",
-    "🤖",
-    "😶‍🌫️",
-    "🌏",
-    "📸",
-    "💿",
-    "👋",
-    "🌊",
-    "✨",
-  ];
-  return emojiList[Math.floor(Math.random() * emojiList.length)];
-}
-
-export function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function makeCombid(userid: string, serverid: string): string {
@@ -92,8 +68,8 @@ export function parseCombid(combid: string): Object {
 
 export async function tryGetUser(
   prisma: PrismaClient,
-  id,
-  guild_id
+  id: string,
+  guild_id: string
 ): Promise<User> {
   let user;
 
@@ -106,6 +82,6 @@ export async function tryGetUser(
   return user;
 }
 
-export function getRandomInt(max) {
+export function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }

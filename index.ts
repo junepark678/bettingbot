@@ -3,14 +3,9 @@ import express from "express";
 import {
   InteractionType,
   InteractionResponseType,
-  InteractionResponseFlags,
-  MessageComponentTypes,
-  ButtonStyleTypes,
 } from "discord-interactions";
 import {
   VerifyDiscordRequest,
-  getRandomEmoji,
-  DiscordRequest,
 } from "./utils.js";
 import { commands } from "./commands.js";
 
@@ -32,7 +27,7 @@ app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
  */
 app.post("/interactions", async function (req, res) {
   // Interaction type and data
-  const { type, id, data } = req.body;
+  const { type, data } = req.body;
 
   /**
    * Handle verification requests
@@ -48,11 +43,11 @@ app.post("/interactions", async function (req, res) {
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name } = data;
 
-    let return_value = null;
+    let return_value: express.Response<any, Record<string, any>> | null = null;
 
     for (let index = 0; index < commands.length; index++) {
       const element = commands[index];
-      if (element.name == name) {
+      if (element.commanddata.name == name) {
         return_value = await element.toRunfunction(res, req, prisma);
       }
     }

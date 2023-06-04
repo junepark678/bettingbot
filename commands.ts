@@ -7,9 +7,26 @@ import {
 } from "./utils.js";
 import { InteractionResponseType } from "discord-interactions";
 import { Routes, APIUser } from "discord-api-types/v10";
-import { Request, Response, application } from "express";
+import { Request, Response } from "express";
+import { APIApplicationCommandOptional, APIInteractionResponseObjectMessage } from "./types.js";
 
-export const commands = [
+
+
+type CommandType = {
+  commanddata: APIApplicationCommandOptional;
+  toRunfunction: (
+    res: Response,
+    req: Request,
+    prisma: PrismaClient
+  ) => Promise<Response<any, Record<string, any>>>;
+};
+
+type ToSendType = {
+  type: number;
+  data: APIInteractionResponseObjectMessage;
+}
+
+export const commands: CommandType[] = [
   {
     toRunfunction: async (
       res: Response,
@@ -26,7 +43,7 @@ export const commands = [
 
       const user = await tryGetUser(prisma, member["user"]["id"], guild_id);
 
-      let tosend: Object;
+      let tosend: ToSendType;
 
       let amount: BigInt = 0n;
 
@@ -104,7 +121,7 @@ export const commands = [
         let mult = getRandomInt(2) + 1;
         let plusminus = Math.random() < 0.3 ? -0.5 : 1; // 30%
 
-        const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
         let final = clamp(mult * plusminus, -0.5, 3);
 
@@ -128,7 +145,9 @@ export const commands = [
               embeds: [
                 {
                   title: "도박 **성공**",
-                  description: `현재 잔액은: ${newuser.balance}원, 도박량: ${final + 1}배`,
+                  description: `현재 잔액은: ${newuser.balance}원, 도박량: ${
+                    final + 1
+                  }배`,
                   color: 2067276, // DarkGreen 	2067276 	#1F8B4C
                 },
               ],
@@ -141,7 +160,9 @@ export const commands = [
               embeds: [
                 {
                   title: "Bet **Success**",
-                  description: `Current Balance:  ${newuser.balance} KRW, Multiplier: ${final + 1}x`,
+                  description: `Current Balance:  ${
+                    newuser.balance
+                  } KRW, Multiplier: ${final + 1}x`,
                   color: 2067276, // DarkGreen 	2067276 	#1F8B4C
                 },
               ],
@@ -157,31 +178,33 @@ export const commands = [
 
       return res.send(tosend);
     },
-    options: [
-      {
-        type: 4, // INTEGER
-        name: "amount",
-        name_localizations: {
-          ko: "량",
+    commanddata: {
+      options: [
+        {
+          type: 4, // INTEGER
+          name: "amount",
+          name_localizations: {
+            ko: "량",
+          },
+          description: "Amount to bet (if none, all in)",
+          description_localizations: {
+            ko: "도박할 량 (선택 안하면 올인)",
+          },
+          required: false,
         },
-        description: "Amount to bet (if none, all in)",
-        description_localizations: {
-          ko: "도박할 량 (선택 안하면 올인)",
-        },
-        required: false,
+      ],
+      name: "bet",
+      name_localizations: {
+        ko: "도박",
       },
-    ],
-    name: "bet",
-    name_localizations: {
-      ko: "도박",
-    },
-    dm_permission: false,
-    type: 1,
-    application_id: 1067953331701551135,
-    default_member_permissions: 0,
-    description: "Bet money to be multiplied",
-    description_localizations: {
-      ko: "도박을 한다.",
+      dm_permission: false,
+      type: 1,
+      application_id: "1067953331701551135",
+      default_member_permissions: "0",
+      description: "Bet money to be multiplied",
+      description_localizations: {
+        ko: "도박을 한다.",
+      },
     },
   },
   {
@@ -211,7 +234,7 @@ export const commands = [
         usernameanddiscrim = `${username}#${discriminator}`;
       }
 
-      let tosend: Object;
+      let tosend: ToSendType;
 
       if (locale == "ko") {
         tosend = {
@@ -248,23 +271,28 @@ export const commands = [
 
       return res.send(tosend);
     },
-    options: [
-      {
-        type: 6, // USER
-        name: "target",
-        name_localizations: { ko: "유저" },
-        description: "Target to check balance on",
-        description_localizations: { ko: "잔액을 확인할 유저" },
-        required: false,
+    commanddata: {
+      options: [
+        {
+          type: 6, // USER
+          name: "target",
+          name_localizations: { ko: "유저" },
+          description: "Target to check balance on",
+          description_localizations: { ko: "잔액을 확인할 유저" },
+          required: false,
+        },
+      ],
+      name: "balance",
+      name_localizations: {
+        ko: "잔액",
       },
-    ],
-    name: "balance",
-    name_localizations: {
-      ko: "잔액",
-    },
-    description: "Get you or somebody else's balance",
-    description_localizations: {
-      ko: "나 또는 다른 사람의 잔액을 확인",
+      application_id: "1067953331701551135",
+      type: 1,
+      description: "Get you or somebody else's balance",
+      description_localizations: {
+        ko: "나 또는 다른 사람의 잔액을 확인",
+      },
+      default_member_permissions: "0",
     },
   },
   {
@@ -273,14 +301,14 @@ export const commands = [
       req: Request,
       prisma: PrismaClient
     ) => {
-      const { guild_id, member, id, data, locale, token } = req.body;
+      const { guild_id, id, data, locale, token } = req.body;
       DiscordRequest(Routes.interactionCallback(id, token), {
         body: {
           type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
         },
         method: "POST",
       });
-      let tosend: Object;
+      let tosend: ToSendType;
       let target: string = "";
       let amount: string = "";
       for (let index = 0; index < data["options"].length; index++) {
@@ -292,7 +320,7 @@ export const commands = [
         }
       }
 
-      const user = await tryGetUser(prisma, target, guild_id);
+      await tryGetUser(prisma, target, guild_id);
 
       await prisma.user.update({
         where: { combid: makeCombid(target, guild_id) },
@@ -332,32 +360,36 @@ export const commands = [
 
       return res.send(tosend);
     },
-    options: [
-      {
-        type: 6, // USER
-        name: "target",
-        name_localizations: { ko: "유저" },
-        description: "Target to give money to",
-        description_localizations: { ko: "돈을 줄 유저" },
-        required: true,
+    commanddata: {
+      options: [
+        {
+          type: 6, // USER
+          name: "target",
+          name_localizations: { ko: "유저" },
+          description: "Target to give money to",
+          description_localizations: { ko: "돈을 줄 유저" },
+          required: true,
+        },
+        {
+          type: 4, // INTEGER
+          name: "amount",
+          name_localizations: { ko: "수량" },
+          description: "Amount of money to generate",
+          description_localizations: { ko: "돈을 줄 량" },
+          required: true,
+        },
+      ],
+      name: "mint",
+      name_localizations: {
+        ko: "조폐국",
       },
-      {
-        type: 4, // INTEGER
-        name: "amount",
-        name_localizations: { ko: "수량" },
-        description: "Amount of money to generate",
-        description_localizations: { ko: "돈을 줄 량" },
-        required: true,
+      description: "Create an arbitary amount of money",
+      description_localizations: {
+        ko: "조폐한다.",
       },
-    ],
-    name: "mint",
-    name_localizations: {
-      ko: "조폐국",
+      type: 1,
+      application_id: "1067953331701551135",
+      default_member_permissions: "8", // ADMINISTRATOR (editable)
     },
-    description: "Create an arbitary amount of money",
-    description_localizations: {
-      ko: "조폐한다.",
-    },
-    default_member_permissions: 8, // ADMINISTRATOR (editable)
   },
 ];
