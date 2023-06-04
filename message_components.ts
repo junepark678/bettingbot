@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { APIButtonComponentWithCustomId, APIMessageComponentInteraction, ComponentType, InteractionResponseType, MessageFlags, Routes } from "discord-api-types/v10";
+import { APIMessageComponentInteraction, InteractionResponseType, MessageFlags, Routes } from "discord-api-types/v10";
 import { Response, Request } from "express";
 import { ToSendType } from "./types.js";
 import { DiscordRequest, makeCombid, tryGetUser } from "./utils.js";
