@@ -47,7 +47,7 @@ export const commands = [
                 embeds: [
                   {
                     title: "숫자가 아니다.",
-                    description: `유저는 숫자가 아닌 것을 요청 하셨습니다.`,
+                    description: "유저는 숫자가 아닌 것을 요청 하셨습니다.",
                     color: 15548997, // Red 	15548997 	#ED4245
                   },
                 ],
@@ -60,7 +60,7 @@ export const commands = [
               embeds: [
                 {
                   title: "Not a number",
-                  description: `That is not a number!`,
+                  description: "That is not a number!",
                   color: 15548997, // Red 	15548997 	#ED4245
                 },
               ],
