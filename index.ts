@@ -1,15 +1,15 @@
 import "dotenv/config";
 import express from "express";
 import {
-  InteractionType,
-  InteractionResponseType,
-} from "discord-interactions";
-import {
   VerifyDiscordRequest,
 } from "./utils.js";
 import { commands } from "./commands.js";
 
 import { PrismaClient } from "@prisma/client";
+
+import { InteractionType, InteractionResponseType, APIInteraction } from "discord-api-types/v10";
+
+import { message_components } from "./message_components.js";
 
 const prisma = new PrismaClient();
 
@@ -27,20 +27,20 @@ app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
  */
 app.post("/interactions", async function (req, res) {
   // Interaction type and data
-  const { type, data } = req.body;
+  const { type, data } = req.body as APIInteraction;
 
   /**
    * Handle verification requests
    */
-  if (type === InteractionType.PING) {
-    return res.send({ type: InteractionResponseType.PONG });
+  if (type === InteractionType.Ping) {
+    return res.send({ type: InteractionResponseType.Pong });
   }
 
   /**
    * Handle slash command requests
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
-  if (type === InteractionType.APPLICATION_COMMAND) {
+  if (type === InteractionType.ApplicationCommand) {
     const { name } = data;
 
     let return_value: express.Response<any, Record<string, any>> | null = null;
@@ -53,6 +53,15 @@ app.post("/interactions", async function (req, res) {
     }
 
     return return_value;
+  }
+
+  if (type === InteractionType.MessageComponent) {
+    const { custom_id } = data;
+    for (const component of message_components) {
+      if (custom_id.startsWith(component.name)){
+        component.toRunfunction(res, req, prisma)
+      }
+    }
   }
 });
 

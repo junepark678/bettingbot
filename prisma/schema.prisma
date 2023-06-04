@@ -6,8 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
@@ -16,6 +18,8 @@ model User {
   balance               BigInt
   sent_transactions     Transaction[] @relation("sender")
   recieved_transactions Transaction[] @relation("reciever")
+  multiplier            Float @default(1)
+  level                 BigInt @default(1)
 }
 
 model Transaction {
@@ -25,4 +29,11 @@ model Transaction {
   reciever   User @relation("reciever", fields: [recieverId], references: [id])
   recieverId BigInt
   amount     BigInt
+}
+
+
+model Store {
+  id        BigInt @id @default(autoincrement())
+  token     String
+  iid       BigInt @unique
 }

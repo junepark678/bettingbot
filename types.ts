@@ -91,3 +91,8 @@ export interface APIInteractionResponseObjectMessage {
     components?: APIMessageComponent[];
     attachments?: APIAttachment[];
 }
+
+export type ToSendType = {
+  type: number;
+  data: APIInteractionResponseObjectMessage;
+};

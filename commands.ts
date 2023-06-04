@@ -6,11 +6,12 @@ import {
   DiscordRequest,
 } from "./utils.js";
 import { InteractionResponseType } from "discord-interactions";
-import { Routes, APIUser } from "discord-api-types/v10";
+import { Routes, APIUser, APIChatInputApplicationCommandInteraction, APIButtonComponentWithCustomId, ComponentType, MessageFlags } from "discord-api-types/v10";
 import { Request, Response } from "express";
-import { APIApplicationCommandOptional, APIInteractionResponseObjectMessage } from "./types.js";
-
-
+import {
+  APIApplicationCommandOptional,
+  ToSendType,
+} from "./types.js";
 
 type CommandType = {
   commanddata: APIApplicationCommandOptional;
@@ -21,10 +22,7 @@ type CommandType = {
   ) => Promise<Response<any, Record<string, any>>>;
 };
 
-type ToSendType = {
-  type: number;
-  data: APIInteractionResponseObjectMessage;
-}
+
 
 export const commands: CommandType[] = [
   {
@@ -117,63 +115,68 @@ export const commands: CommandType[] = [
             ],
           },
         };
-      } else {
-        let mult = getRandomInt(2) + 1;
-        let plusminus = Math.random() < 0.3 ? -0.5 : 1; // 30%
-
-        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
-
-        let final = clamp(mult * plusminus, -0.5, 3);
-
-        let amountToSet = BigInt(
-          Math.ceil(Number.parseInt(amount.toString()) * final)
-        );
-
-        const newuser = await prisma.user.update({
-          where: { combid: makeCombid(member.user.id, guild_id) },
-          data: {
-            balance: {
-              increment: amountToSet,
-            },
-          },
+        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+          body: tosend["data"],
+          method: "POST",
         });
+        return res.send(tosend);
+      }
+      let mult = getRandomInt(2) + 1;
+      let plusminus = Math.random() < 0.3 ? -0.5 : 1; // 30%
 
-        if (locale == "ko") {
-          tosend = {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-              embeds: [
-                {
-                  title: "도박 **성공**",
-                  description: `현재 잔액은: ${newuser.balance}원, 도박량: ${
-                    final + 1
-                  }배`,
-                  color: 2067276, // DarkGreen 	2067276 	#1F8B4C
-                },
-              ],
-            },
-          };
-        } else {
-          tosend = {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-              embeds: [
-                {
-                  title: "Bet **Success**",
-                  description: `Current Balance:  ${
-                    newuser.balance
-                  } KRW, Multiplier: ${final + 1}x`,
-                  color: 2067276, // DarkGreen 	2067276 	#1F8B4C
-                },
-              ],
-            },
-          };
-        }
+      const clamp = (num: number, min: number, max: number) =>
+        Math.min(Math.max(num, min), max);
+
+      let final = clamp(mult * plusminus, -0.5, 3) * user.multiplier;
+
+      let amountToSet = BigInt(
+        Math.ceil(Number.parseInt(amount.toString()) * final)
+      );
+
+      if (locale == "ko") {
+        tosend = {
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                title: "도박 **성공**",
+                description: `현재 잔액은: ${
+                  user.balance + amountToSet
+                }원, 도박량: ${final + 1}배`,
+                color: 2067276, // DarkGreen 	2067276 	#1F8B4C
+              },
+            ],
+          },
+        };
+      } else {
+        tosend = {
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                title: "Bet **Success**",
+                description: `Current Balance:  ${
+                  user.balance + amountToSet
+                } KRW, Multiplier: ${final + 1}x`,
+                color: 2067276, // DarkGreen 	2067276 	#1F8B4C
+              },
+            ],
+          },
+        };
       }
 
       DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
         body: tosend["data"],
         method: "POST",
+      });
+
+      await prisma.user.update({
+        where: { combid: makeCombid(member.user.id, guild_id) },
+        data: {
+          balance: {
+            increment: amountToSet,
+          },
+        },
       });
 
       return res.send(tosend);
@@ -388,6 +391,103 @@ export const commands: CommandType[] = [
       type: 1,
       application_id: "1067953331701551135",
       default_member_permissions: "8", // ADMINISTRATOR (editable)
+    },
+  },
+  {
+    toRunfunction: async (res, req, prisma) => {
+      const { guild_id, id, member, locale, token } = req.body as APIChatInputApplicationCommandInteraction;
+      DiscordRequest(Routes.interactionCallback(id, token), {
+        body: {
+          type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        },
+        method: "POST",
+      });
+
+      let tosend: ToSendType;
+
+      let user = await tryGetUser(prisma, member.user.id, guild_id);
+
+      let usernameanddiscrim = `${member["user"]["username"]}#${member["user"]["discriminator"]}`;
+
+      let userlevel = Number.parseInt(user.level.toString());
+      
+      let price = Math.pow(10, userlevel) * userlevel
+
+      if (locale === "ko") {
+        tosend = {
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                title: `${usernameanddiscrim}의 상점`,
+                description: `현재 래밸: ${userlevel}, 배량: ${user.multiplier}`,
+              }
+            ],
+            components: [
+              {
+                type: 1,
+                components: [
+                  {
+                    type: ComponentType.Button,
+                    custom_id: `store_levelup_${member.user.id}`,
+                    label: `레벨업! (${price}원)`,
+                    style: 1,
+                    disabled: price > user.balance
+                  } as APIButtonComponentWithCustomId,
+                ]
+              }
+            ]
+          }
+        }
+      }
+      else {
+        tosend = {
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            embeds: [
+              {
+                title: `${usernameanddiscrim}'s Store`,
+                description: `Current level: ${userlevel}, Multiplier: ${user.multiplier}`,
+              }
+            ],
+            components: [
+              {
+                type: 1,
+                components: [
+                  {
+                    type: ComponentType.Button,
+                    custom_id: `store_levelup_${member.user.id}_${id}`,
+                    label: `Level Up! (${price} KRW)`,
+                    style: 1,
+                    disabled: price > user.balance
+                  } as APIButtonComponentWithCustomId,
+                ]
+              }
+            ],
+            flags: MessageFlags.Ephemeral
+          }
+        }
+      }
+
+      DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+        body: tosend["data"],
+        method: "POST",
+      });
+
+      return res.send(tosend)
+
+    },
+    commanddata: {
+      type: 1,
+      application_id: process.env.APP_ID!,
+      name: "shop",
+      name_localizations: {
+        ko: "상점",
+      },
+      description: "Buy upgrades!",
+      description_localizations: {
+        ko: "업그래이드를 살 수 있다",
+      },
     },
   },
 ];
