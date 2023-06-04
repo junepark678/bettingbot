@@ -47,6 +47,7 @@ export const message_components: MessageComponentType[] = [
         DiscordRequest(Routes.interactionCallback(id, token), {
             body: {
               type: InteractionResponseType.DeferredChannelMessageWithSource,
+              flags: MessageFlags.Ephemeral
             },
             method: "POST",
           });
