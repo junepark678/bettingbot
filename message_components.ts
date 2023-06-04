@@ -180,10 +180,10 @@ export const message_components: MessageComponentType[] = [
           }
         }
 
-        // DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
-        //     body: tosend["data"],
-        //     method: "POST",
-        //   });
+        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+            body: tosend["data"],
+            method: "POST",
+          });
         
 
     },
