@@ -128,7 +128,7 @@ export const commands = [
               embeds: [
                 {
                   title: "도박 **성공**",
-                  description: `현재 잔액은: ${newuser.balance}원, 도박량: ${final}배`,
+                  description: `현재 잔액은: ${newuser.balance}원, 도박량: ${final + 1}배`,
                   color: 2067276, // DarkGreen 	2067276 	#1F8B4C
                 },
               ],
@@ -141,7 +141,7 @@ export const commands = [
               embeds: [
                 {
                   title: "Bet **Success**",
-                  description: `Current Balance:  ${newuser.balance} KRW, Multiplier: ${final}x`,
+                  description: `Current Balance:  ${newuser.balance} KRW, Multiplier: ${final + 1}x`,
                   color: 2067276, // DarkGreen 	2067276 	#1F8B4C
                 },
               ],
