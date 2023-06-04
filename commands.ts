@@ -413,7 +413,7 @@ export const commands: CommandType[] = [
       
       let price = Math.pow(10, userlevel) * userlevel;
 
-      prisma.store.create({
+      await prisma.store.create({
         data: {
           iid: BigInt(id),
           token: token
