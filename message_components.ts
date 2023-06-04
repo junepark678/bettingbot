@@ -75,6 +75,10 @@ export const message_components: MessageComponentType[] = [
                     flags: MessageFlags.Ephemeral
                 }
             }
+            DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+                body: tosend["data"],
+                method: "POST",
+              });
             return res.send(tosend);
         }
 
@@ -101,6 +105,11 @@ export const message_components: MessageComponentType[] = [
                 }
             }
         })
+
+        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+            body: tosend["data"],
+            method: "POST",
+          });
 
         let usernameanddiscrim = `${member["user"]["username"]}#${member["user"]["discriminator"]}`;
         userlevel += 1;
@@ -129,7 +138,8 @@ export const message_components: MessageComponentType[] = [
                     } as APIButtonComponentWithCustomId,
                   ]
                 }
-              ]
+              ],
+              flags: MessageFlags.Ephemeral
             }
           }
         }
@@ -168,6 +178,7 @@ export const message_components: MessageComponentType[] = [
             },
             method: "PATCH"
         })
+        
 
     },
     name: 'store_levelup_'

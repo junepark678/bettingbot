@@ -436,7 +436,8 @@ export const commands: CommandType[] = [
                   } as APIButtonComponentWithCustomId,
                 ]
               }
-            ]
+            ],
+            flags: MessageFlags.Ephemeral
           }
         }
       }
