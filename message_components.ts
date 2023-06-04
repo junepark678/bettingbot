@@ -51,36 +51,36 @@ export const message_components: MessageComponentType[] = [
             method: "POST",
           });
           
-        let interaction = await prisma.store.findFirst({
-            where: {iid: BigInt(custom_id.substring(14+19))}
-        })
-        if (interaction === undefined||interaction === null) {
-            if (locale === "ko") {
-                tosend = {
-                    type: InteractionResponseType.ChannelMessageWithSource,
-                    data: {
-                        embeds: [{
-                            description: "존재하지 않은 스토어 입니다!"
-                        }],
-                        flags: MessageFlags.Ephemeral
-                    }
-                }
-            }
-            tosend = {
-                type: InteractionResponseType.ChannelMessageWithSource,
-                data: {
-                    embeds: [{
-                        description: "That store doesn't exist!"
-                    }],
-                    flags: MessageFlags.Ephemeral
-                }
-            }
-            DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
-                body: tosend["data"],
-                method: "POST",
-              });
-            return res.send(tosend);
-        }
+        // let interaction = await prisma.store.findFirst({
+        //     where: {iid: BigInt(custom_id.substring(14+19))}
+        // })
+        // if (interaction === undefined||interaction === null) {
+        //     if (locale === "ko") {
+        //         tosend = {
+        //             type: InteractionResponseType.ChannelMessageWithSource,
+        //             data: {
+        //                 embeds: [{
+        //                     description: "존재하지 않은 스토어 입니다!"
+        //                 }],
+        //                 flags: MessageFlags.Ephemeral
+        //             }
+        //         }
+        //     }
+        //     tosend = {
+        //         type: InteractionResponseType.ChannelMessageWithSource,
+        //         data: {
+        //             embeds: [{
+        //                 description: "That store doesn't exist!"
+        //             }],
+        //             flags: MessageFlags.Ephemeral
+        //         }
+        //     }
+        //     DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+        //         body: tosend["data"],
+        //         method: "POST",
+        //       });
+        //     return res.send(tosend);
+        // }
 
         const combid = makeCombid(member.user.id, guild_id);        
         
@@ -180,10 +180,10 @@ export const message_components: MessageComponentType[] = [
           }
         }
 
-        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
-            body: tosend["data"],
-            method: "POST",
-          });
+        // DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+        //     body: tosend["data"],
+        //     method: "POST",
+        //   });
         
 
     },
