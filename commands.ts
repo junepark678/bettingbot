@@ -107,7 +107,7 @@ export const commands = [
 
         const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-        let final = clamp(mult * plusminus, -1, 3);
+        let final = clamp(mult * plusminus, -0.5, 3);
 
         let amountToSet = BigInt(Math.ceil(Number.parseInt(amount.toString()) * final));
 
