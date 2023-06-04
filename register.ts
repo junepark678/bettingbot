@@ -1,6 +1,6 @@
-import 'dotenv/config';
-import { InstallGlobalCommands } from './utils.js';
-import { commands } from './commands.js';
+import "dotenv/config";
+import { InstallGlobalCommands } from "./utils.js";
+import { commands } from "./commands.js";
 
 // commands.forEach(element => {
 //     delete element["toRunfunction"]
