@@ -117,10 +117,7 @@ export const message_components: MessageComponentType[] = [
             type: InteractionResponseType.ChannelMessageWithSource
         }
 
-        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
-            body: tosend["data"],
-            method: "POST",
-          });
+        
 
         let usernameanddiscrim = `${member["user"]["username"]}#${member["user"]["discriminator"]}`;
         userlevel += 1;
@@ -183,12 +180,10 @@ export const message_components: MessageComponentType[] = [
           }
         }
 
-        DiscordRequest(Routes.webhookMessage(interaction.iid.toString(), interaction.token), {
-            body: {
-                ...tosend
-            },
-            method: "PATCH"
-        })
+        DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
+            body: tosend["data"],
+            method: "POST",
+          });
         
 
     },
