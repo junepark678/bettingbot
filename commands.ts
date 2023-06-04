@@ -399,7 +399,9 @@ export const commands: CommandType[] = [
       DiscordRequest(Routes.interactionCallback(id, token), {
         body: {
           type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-          flags: MessageFlags.Ephemeral
+          data: {
+            flags: MessageFlags.Ephemeral,
+          },
         },
         method: "POST",
       });
