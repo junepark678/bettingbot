@@ -411,7 +411,14 @@ export const commands: CommandType[] = [
 
       let userlevel = Number.parseInt(user.level.toString());
       
-      let price = Math.pow(10, userlevel) * userlevel
+      let price = Math.pow(10, userlevel) * userlevel;
+
+      prisma.store.create({
+        data: {
+          iid: BigInt(id),
+          token: token
+        }
+      })
 
       if (locale === "ko") {
         tosend = {
