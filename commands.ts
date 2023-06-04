@@ -439,7 +439,7 @@ export const commands: CommandType[] = [
                     custom_id: `store_levelup_${member.user.id}_${id}`,
                     label: `레벨업! (${price}원)`,
                     style: 1,
-                    disabled: price > user.balance
+                    disabled: BigInt(price) > user.balance
                   } as APIButtonComponentWithCustomId,
                 ]
               }
@@ -467,7 +467,7 @@ export const commands: CommandType[] = [
                     custom_id: `store_levelup_${member.user.id}_${id}`,
                     label: `Level Up! (${price} KRW)`,
                     style: 1,
-                    disabled: price > user.balance
+                    disabled: BigInt(price) > user.balance
                   } as APIButtonComponentWithCustomId,
                 ]
               }
