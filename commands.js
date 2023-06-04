@@ -86,8 +86,8 @@ export const commands = [
                 };
             }
             else {
-                let mult = getRandomInt(3);
-                let plusminus = Math.random() < 0.4 ? -1 : 1;
+                let mult = getRandomInt(2) + 1;
+                let plusminus = Math.random() < 0.3 ? -0.5 : 1;
                 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
                 let final = clamp(mult * plusminus, -1, 3);
                 let amountToSet = BigInt(amount.toString()) * BigInt(final);
