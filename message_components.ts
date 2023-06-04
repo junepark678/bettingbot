@@ -106,6 +106,17 @@ export const message_components: MessageComponentType[] = [
             }
         })
 
+        tosend = {
+            data: {
+                embeds: [
+                    {
+                        title: (locale === "ko")? "성공" : "Done!"
+                    }
+                ]
+            },
+            type: InteractionResponseType.ChannelMessageWithSource
+        }
+
         DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
             body: tosend["data"],
             method: "POST",
