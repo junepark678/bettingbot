@@ -185,7 +185,7 @@ export const message_components: MessageComponentType[] = [
 
         DiscordRequest(Routes.webhookMessage(interaction.iid.toString(), interaction.token), {
             body: {
-                tosend
+                ...tosend
             },
             method: "PATCH"
         })
