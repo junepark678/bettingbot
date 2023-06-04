@@ -65,7 +65,7 @@ export const commands = [
               ],
             },
           };
-          DiscordRequest(Routes.webhook(process.env.APP_ID, token), {
+          DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
             body: tosend["data"],
             method: "POST",
           });
@@ -150,7 +150,7 @@ export const commands = [
         }
       }
 
-      DiscordRequest(Routes.webhook(process.env.APP_ID, token), {
+      DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
         body: tosend["data"],
         method: "POST",
       });
@@ -241,7 +241,7 @@ export const commands = [
         };
       }
 
-      DiscordRequest(Routes.webhook(process.env.APP_ID, token), {
+      DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
         body: tosend["data"],
         method: "POST",
       });
@@ -281,8 +281,8 @@ export const commands = [
         method: "POST",
       });
       let tosend: Object;
-      let target: string;
-      let amount: string;
+      let target: string = "";
+      let amount: string = "";
       for (let index = 0; index < data["options"].length; index++) {
         const element = data["options"][index];
         if (element["name"] === "target") {
@@ -325,7 +325,7 @@ export const commands = [
         },
       };
 
-      DiscordRequest(Routes.webhook(process.env.APP_ID, token), {
+      DiscordRequest(Routes.webhook(process.env.APP_ID!, token), {
         body: tosend["data"],
         method: "POST",
       });
