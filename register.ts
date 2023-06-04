@@ -7,7 +7,7 @@ import { APIApplicationCommandOptional } from "./types.js";
 //     delete element["toRunfunction"]
 // });
 
-let CommandData: APIApplicationCommandOptional[];
+let CommandData: APIApplicationCommandOptional[] = [];
 
 for (const iterator of commands) {
     CommandData.push(iterator.commanddata)

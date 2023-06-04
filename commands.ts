@@ -200,7 +200,6 @@ export const commands: CommandType[] = [
       dm_permission: false,
       type: 1,
       application_id: "1067953331701551135",
-      default_member_permissions: "0",
       description: "Bet money to be multiplied",
       description_localizations: {
         ko: "도박을 한다.",
@@ -292,7 +291,6 @@ export const commands: CommandType[] = [
       description_localizations: {
         ko: "나 또는 다른 사람의 잔액을 확인",
       },
-      default_member_permissions: "0",
     },
   },
   {
